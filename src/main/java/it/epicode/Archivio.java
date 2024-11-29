@@ -7,58 +7,66 @@ public class Archivio {
 
     Set<Pubblicazione> pubblicazioni = new HashSet<>();
 
-    public void aggiungiEl(Pubblicazione p) throws ExistingIsbn {
+    public void aggiungiEl(Pubblicazione p) throws ExistingIsbnException {
         if (!pubblicazioni.add(p)) {
-            throw new ExistingIsbn("Esiste già un elemento con lo stesso ISBN!");
+            throw new ExistingIsbnException("Esiste già un elemento con lo stesso ISBN!");
         }
         System.out.println("la pubblicazione è stata correttamente aggiunta");
     }
 
-    public Pubblicazione ricercaPerISBN(int isbn) throws NotExistingIsbn {
+    public Pubblicazione ricercaPerISBN(int isbn) throws NotExistingIsbnException {
         Pubblicazione result = pubblicazioni.stream()
                 .filter(pub -> pub.getISBN() == isbn)
                 .findFirst()
                 .orElse(null);
-        if(result == null) throw new NotExistingIsbn("non esiste una pubblicazione con questo Isbn!!");
+        if(result == null) throw new NotExistingIsbnException("non esiste una pubblicazione con questo Isbn!!");
         return result;
     }
 
-    public void eliminaPerISBN(int isbn) throws NotExistingIsbn {
+    public void eliminaPerISBN(int isbn) throws NotExistingIsbnException {
         Pubblicazione elDaEliminare = pubblicazioni.stream()
                 .filter(pub -> pub.getISBN() == isbn)
                 .findFirst()
                 .orElse(null);
 
-        if(elDaEliminare == null) throw new NotExistingIsbn("non esiste una pubblicazione con questo Isbn!!");
+        if(elDaEliminare == null) throw new NotExistingIsbnException("non esiste una pubblicazione con questo Isbn!!");
 
         pubblicazioni.remove(elDaEliminare);
         System.out.println("la pubblicazione è stata correttamente eliminata");
     }
 
-    public Pubblicazione ricercaAnnoPubblicazione (LocalDate data){
+    public Pubblicazione ricercaAnnoPubblicazione (LocalDate data) throws PubblicazioneNonTrovataException {
         Pubblicazione result = pubblicazioni.stream()
                 .filter(pub -> pub.getAnnoDiPubblicazione().isEqual(data))
                 .findFirst()
                 .orElse(null);
+
+        if (result == null) {
+            throw new PubblicazioneNonTrovataException("Nessuna pubblicazione trovata per l'anno: " + data);
+        }
                 return result;
+
     }
 
-    public Libro ricercaPerAutore(String autore){
+    public Libro ricercaPerAutore(String autore) throws LibroNonTrovatoException {
         Libro result = pubblicazioni.stream()
                 .filter(pub -> pub instanceof Libro)
                 .map(pub -> (Libro) pub)
                 .filter(pub -> pub.getAutore().equals(autore))
                 .findFirst()
                 .orElse(null);
+        if (result == null) {
+            throw new LibroNonTrovatoException("Nessun libro trovato con l'autore: " + autore);
+        }
         return result;
     }
 
-    public void aggiornamentoDaIsbn (int isbn , Pubblicazione p) throws NotExistingIsbn {
+    public void aggiornamentoDaIsbn (int isbn , Pubblicazione p) throws NotExistingIsbnException {
         Pubblicazione elDaAggiornare = pubblicazioni.stream()
                 .filter(pub -> pub.getISBN() == isbn)
                 .findFirst()
                 .orElse(null);
-        if(elDaAggiornare == null) throw new NotExistingIsbn("non esiste una pubblicazione con questo Isbn!!");
+        if(elDaAggiornare == null) throw new NotExistingIsbnException("non esiste una pubblicazione con questo Isbn!!");
 
         pubblicazioni.remove(elDaAggiornare);
         pubblicazioni.add(p);

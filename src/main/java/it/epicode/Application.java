@@ -24,7 +24,7 @@ public class Application {
             archivio.aggiungiEl(rivista1);
             archivio.aggiungiEl(rivista2);
             archivio.aggiungiEl(rivista3);
-        } catch (ExistingIsbn e) {
+        } catch (ExistingIsbnException e) {
             System.out.println(e.getMessage());
         }
 
@@ -63,28 +63,44 @@ public class Application {
                         try {
                             Pubblicazione p = archivio.ricercaPerISBN(isbnRicerca);
                             System.out.println("Pubblicazione trovata: " + p);
-                        } catch (NotExistingIsbn e) {
+                        } catch (NotExistingIsbnException e) {
                             System.out.println(e.getMessage());
                         }
                         break;
                     case 3:
-
-                    case 4:
-                        archivio.statisticheCatalogo();
+                        System.out.println("Inserisci l'autore da cercare:");
+                        String autore = scanner.nextLine();
+                        try {
+                            Libro libroTrovato = archivio.ricercaPerAutore(autore);
+                            System.out.println("Libro trovato: " + libroTrovato);
+                        } catch (LibroNonTrovatoException e) {
+                            System.out.println(e.getMessage());
+                        }
                         break;
+                    case 4:
+                        System.out.println("Inserisci anno di pubblicazione (YYYY-MM-DD) per cercare la pubblicazione:");
+                        LocalDate annoDiPubblicazione = LocalDate.parse(scanner.nextLine());
+                        try{
+                            Pubblicazione pubbTrovata = archivio.ricercaAnnoPubblicazione(annoDiPubblicazione);
+                            System.out.println("Pubblicazione trovata: " + pubbTrovata);
+                        }
+                        catch (PubblicazioneNonTrovataException e){
+                            System.out.println(e.getMessage());
+                        }
                     case 5:
 
                     case 6:
-                        System.out.println("Inserisci ISBN da eliminare:");
+                        System.out.println("Inserisci ISBN per eliminare la bubblicazione:");
                         int isbnElimina = scanner.nextInt();
                         try {
                             archivio.eliminaPerISBN(isbnElimina);
-                        } catch (NotExistingIsbn e) {
+                        } catch (NotExistingIsbnException e) {
                             System.out.println(e.getMessage());
                         }
                         break;
                     case 7:
-
+                        archivio.statisticheCatalogo();
+                        break;
                     case 0:
                         System.out.println("Uscita dall'app");
                         break;
