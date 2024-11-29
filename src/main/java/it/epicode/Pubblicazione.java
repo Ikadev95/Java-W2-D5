@@ -1,6 +1,7 @@
 package it.epicode;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 abstract public class Pubblicazione {
     private int ISBN;
@@ -44,4 +45,5 @@ abstract public class Pubblicazione {
     }
 
     public void stampa (){}
+
 }

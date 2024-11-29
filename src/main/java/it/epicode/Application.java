@@ -18,6 +18,8 @@ public class Application {
 
         Archivio archivio = new Archivio();
 
+
+
         try{
             archivio.aggiungiEl(libro1);
             archivio.aggiungiEl(libro2);
@@ -29,6 +31,7 @@ public class Application {
             System.out.println(e.getMessage());
         }
 
+        archivio.getPubblicazioni().forEach(pub -> pub.stampa());
         Scanner scanner = new Scanner(System.in);
 
         while(true){
@@ -115,7 +118,8 @@ public class Application {
                         String autore = scanner.nextLine();
                         try {
                             Libro libroTrovato = archivio.ricercaPerAutore(autore);
-                            System.out.println("Libro trovato: " + libroTrovato);
+                            System.out.println("Libro trovato: ");
+                            libroTrovato.stampa();
                         } catch (LibroNonTrovatoException e) {
                             System.out.println(e.getMessage());
                         }
@@ -135,7 +139,8 @@ public class Application {
                         }
                         try{
                             Pubblicazione pubbTrovata = archivio.ricercaAnnoPubblicazione(annoDiPubblicazione);
-                            System.out.println("Pubblicazione trovata: " + pubbTrovata);
+                            System.out.println("Pubblicazione trovata: ");
+                            pubbTrovata.stampa();
                         } catch (PubblicazioneNonTrovataException e){
                             System.out.println(e.getMessage());
                         }

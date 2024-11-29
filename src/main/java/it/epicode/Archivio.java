@@ -7,6 +7,10 @@ public class Archivio {
 
     Set<Pubblicazione> pubblicazioni = new HashSet<>();
 
+    public Set<Pubblicazione> getPubblicazioni() {
+        return pubblicazioni;
+    }
+
     public void aggiungiEl(Pubblicazione p) throws ExistingIsbnException {
         if (!pubblicazioni.add(p)) {
             throw new ExistingIsbnException("Esiste già un elemento con lo stesso ISBN!");
@@ -19,7 +23,12 @@ public class Archivio {
                 .filter(pub -> pub.getISBN() == isbn)
                 .findFirst()
                 .orElse(null);
-        if(result == null) throw new NotExistingIsbnException("non esiste una pubblicazione con questo Isbn!!");
+
+        if (result == null) {
+            throw new NotExistingIsbnException("Non esiste una pubblicazione con questo ISBN.");
+        }
+
+        System.out.println("Pubblicazione trovata: " + result);  // Verifica che il risultato sia corretto
         return result;
     }
 
@@ -52,7 +61,7 @@ public class Archivio {
         Libro result = pubblicazioni.stream()
                 .filter(pub -> pub instanceof Libro)
                 .map(pub -> (Libro) pub)
-                .filter(pub -> pub.getAutore().equals(autore))
+                .filter(pub -> pub.getAutore().toLowerCase().equals(autore.toLowerCase()))
                 .findFirst()
                 .orElse(null);
         if (result == null) {
@@ -71,7 +80,8 @@ public class Archivio {
             throw new NotExistingIsbnException("Non esiste una pubblicazione con questo ISBN!");
         }
 
-        System.out.println("Pubblicazione trovata: " + elDaAggiornare);
+        System.out.println("Pubblicazione trovata: " );
+        elDaAggiornare.stampa();
 
         Scanner scanner = new Scanner(System.in);
 
@@ -102,7 +112,8 @@ public class Archivio {
                 System.out.println("Inserisci una data valida (formato YYYY-MM-DD).");
             }
         }
-        System.out.println("Pubblicazione aggiornata: " + elDaAggiornare);
+        System.out.println("Pubblicazione aggiornata: " );
+        elDaAggiornare.stampa();
     }
 
 
@@ -120,7 +131,8 @@ public class Archivio {
         Pubblicazione elMaxPagine = pubblicazioni.stream()
                 .max(Comparator.comparing(Pubblicazione::getNumeroPagine))
                 .orElse(null);
-        System.out.println("la pubblicazione con il maggior numero di pagine è " + elMaxPagine);
+        System.out.println("la pubblicazione con il maggior numero di pagine è " );
+        elMaxPagine.stampa();
 
         OptionalDouble mediaPagine = pubblicazioni.stream()
                 .mapToDouble(Pubblicazione::getNumeroPagine)

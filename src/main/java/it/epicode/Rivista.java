@@ -17,6 +17,6 @@ public class Rivista extends Pubblicazione {
     @Override
     public void stampa() {
         super.stampa();
-        System.out.println(this.titolo + " " + this.getISBN() + " " + this.annoDiPubblicazione + " " + this.numeroPagine);
+        System.out.println(this.getTitolo() + " " + this.getISBN() + " " + this.getAnnoDiPubblicazione() + " " + this.getNumeroPagine());
     }
 }
