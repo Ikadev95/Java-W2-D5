@@ -1,6 +1,7 @@
 package it.epicode;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.Scanner;
 
 public class Application {
@@ -44,6 +45,7 @@ public class Application {
 
             try{
                 int x = scanner.nextInt();
+                scanner.nextLine();
 
                 switch (x){
                     case 1:
@@ -51,12 +53,21 @@ public class Application {
                         String tipo = scanner.nextLine();
                         System.out.println("inserisci ISBN:");
                         int isbn = scanner.nextInt();
+                        scanner.nextLine();
                         System.out.println("Inserisci titolo:");
                         String titolo = scanner.nextLine();
                         System.out.println("inserisci il numero di pagine:");
                         int pagine = scanner.nextInt();
+                        scanner.nextLine();
                         System.out.println("Inserisci anno di pubblicazione (YYYY-MM-DD):");
-                        LocalDate anno = LocalDate.parse(scanner.nextLine());
+                        String annoInput = scanner.nextLine();
+                        LocalDate anno = null;
+                        try {
+                            anno = LocalDate.parse(annoInput);
+                        } catch (DateTimeParseException e) {
+                            System.out.println("Formato data non valido. Inserisci una data nel formato YYYY-MM-DD.");
+                        }
+
 
                         if(tipo.toLowerCase().equals("libro")){
                             System.out.println("Inserisci autore:");
@@ -90,9 +101,11 @@ public class Application {
                     case 2:
                         System.out.println("Inserisci ISBN da cercare:");
                         int isbnRicerca = scanner.nextInt();
+                        scanner.nextLine();
                         try {
                             Pubblicazione p = archivio.ricercaPerISBN(isbnRicerca);
-                            System.out.println("Pubblicazione trovata: " + p);
+                            System.out.println("Pubblicazione trovata: " );
+                            p.stampa();
                         } catch (NotExistingIsbnException e) {
                             System.out.println(e.getMessage());
                         }
@@ -109,24 +122,39 @@ public class Application {
                         break;
                     case 4:
                         System.out.println("Inserisci anno di pubblicazione (YYYY-MM-DD) per cercare la pubblicazione:");
-                        LocalDate annoDiPubblicazione = LocalDate.parse(scanner.nextLine());
+                        LocalDate annoDiPubblicazione = null;
+                        boolean validDate = false;
+                        while (!validDate) {
+                            String annoInput1 = scanner.nextLine();
+                            try {
+                                annoDiPubblicazione = LocalDate.parse(annoInput1);
+                                validDate = true;
+                            } catch (DateTimeParseException e) {
+                                System.out.println("Formato data non valido. Inserisci una data nel formato YYYY-MM-DD.");
+                            }
+                        }
                         try{
                             Pubblicazione pubbTrovata = archivio.ricercaAnnoPubblicazione(annoDiPubblicazione);
                             System.out.println("Pubblicazione trovata: " + pubbTrovata);
-                        }
-                        catch (PubblicazioneNonTrovataException e){
+                        } catch (PubblicazioneNonTrovataException e){
                             System.out.println(e.getMessage());
                         }
+                        break;
                     case 5:
                         System.out.println("Inserisci ISBN per modificare la bubblicazione:");
                         int ISBN = scanner.nextInt();
+                        scanner.nextLine();
                         try{
                             archivio.aggiornamentoDaIsbn(ISBN);
                         }
-                        catch ()
+                        catch (NotExistingIsbnException e) {
+                            System.out.println(e.getMessage());
+                        }
+                        break;
                     case 6:
                         System.out.println("Inserisci ISBN per eliminare la bubblicazione:");
                         int isbnElimina = scanner.nextInt();
+                        scanner.nextLine();
                         try {
                             archivio.eliminaPerISBN(isbnElimina);
                         } catch (NotExistingIsbnException e) {
@@ -138,7 +166,7 @@ public class Application {
                         break;
                     case 0:
                         System.out.println("Uscita dall'app");
-                        break;
+                        return;
                     default:
                         System.out.println("Scelta non valida");
                         break;

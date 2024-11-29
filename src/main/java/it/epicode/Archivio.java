@@ -66,30 +66,42 @@ public class Archivio {
                 .filter(pub -> pub.getISBN() == isbn)
                 .findFirst()
                 .orElse(null);
-        if (elDaAggiornare == null) throw new NotExistingIsbnException("Non esiste una pubblicazione con questo ISBN!");
+
+        if (elDaAggiornare == null) {
+            throw new NotExistingIsbnException("Non esiste una pubblicazione con questo ISBN!");
+        }
 
         System.out.println("Pubblicazione trovata: " + elDaAggiornare);
 
         Scanner scanner = new Scanner(System.in);
 
-        System.out.println("Vuoi modificare il titolo? premi invio per lasciare invariato");
+        System.out.println("Vuoi modificare il titolo? Premi invio per lasciare invariato");
         String titolo = scanner.nextLine();
         if (!titolo.isEmpty()) {
             elDaAggiornare.setTitolo(titolo);
         }
 
-        System.out.println("Vuoi modificare il numero di pagine? premi invio per lasciare invariato");
+        System.out.println("Vuoi modificare il numero di pagine? Premi invio per lasciare invariato");
         String pagineInput = scanner.nextLine();
         if (!pagineInput.isEmpty()) {
-            elDaAggiornare.setNumeroPagine(Integer.parseInt(pagineInput));
+            try {
+                int pagine = Integer.parseInt(pagineInput);
+                elDaAggiornare.setNumeroPagine(pagine);
+            } catch (NumberFormatException e) {
+                System.out.println("Inserisci un numero valido per le pagine.");
+            }
         }
 
-        System.out.println("Vuoi modificare l'anno di pubblicazione? premi invio per lasciare invariato");
+        System.out.println("Vuoi modificare l'anno di pubblicazione? Premi invio per lasciare invariato");
         String annoInput = scanner.nextLine();
         if (!annoInput.isEmpty()) {
-            elDaAggiornare.setAnnoDiPubblicazione(LocalDate.parse(annoInput));
+            try {
+                LocalDate annoPubblicazione = LocalDate.parse(annoInput);
+                elDaAggiornare.setAnnoDiPubblicazione(annoPubblicazione);
+            } catch (Exception e) {
+                System.out.println("Inserisci una data valida (formato YYYY-MM-DD).");
+            }
         }
-
         System.out.println("Pubblicazione aggiornata: " + elDaAggiornare);
     }
 
