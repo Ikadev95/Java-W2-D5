@@ -51,12 +51,42 @@ public class Application {
                         String tipo = scanner.nextLine();
                         System.out.println("inserisci ISBN:");
                         int isbn = scanner.nextInt();
+                        System.out.println("Inserisci titolo:");
+                        String titolo = scanner.nextLine();
                         System.out.println("inserisci il numero di pagine:");
                         int pagine = scanner.nextInt();
                         System.out.println("Inserisci anno di pubblicazione (YYYY-MM-DD):");
                         LocalDate anno = LocalDate.parse(scanner.nextLine());
 
-
+                        if(tipo.toLowerCase().equals("libro")){
+                            System.out.println("Inserisci autore:");
+                            String autore = scanner.nextLine();
+                            System.out.println("Inserisci genere:");
+                            String genere = scanner.nextLine();
+                            Pubblicazione libro = new Libro(isbn,titolo,anno,pagine,autore,genere);
+                            try {
+                                archivio.aggiungiEl(libro);
+                            } catch (ExistingIsbnException e) {
+                                System.out.println(e.getMessage());
+                            }
+                        }
+                        else if(tipo.toLowerCase().equals("rivista")){
+                            System.out.println("Inserisci periodicità: SETTIMANALE, MENSILE, SEMESTRALE");
+                            try {
+                                Periodicita periodicita = Periodicita.valueOf(scanner.nextLine().toUpperCase());
+                                Pubblicazione rivista = new Rivista(isbn, titolo, anno, pagine, periodicita);
+                                try {
+                                    archivio.aggiungiEl(rivista);
+                                } catch (ExistingIsbnException e) {
+                                    System.out.println(e.getMessage());
+                                }
+                            } catch (IllegalArgumentException e) {
+                                System.out.println("Periodicità non valida. Scegli tra SETTIMANALE, MENSILE, SEMESTRALE.");
+                            }
+                        } else {
+                            System.out.println("Tipo di pubblicazione non riconosciuto.");
+                        }
+                        break;
                     case 2:
                         System.out.println("Inserisci ISBN da cercare:");
                         int isbnRicerca = scanner.nextInt();
@@ -88,7 +118,12 @@ public class Application {
                             System.out.println(e.getMessage());
                         }
                     case 5:
-
+                        System.out.println("Inserisci ISBN per modificare la bubblicazione:");
+                        int ISBN = scanner.nextInt();
+                        try{
+                            archivio.aggiornamentoDaIsbn(ISBN);
+                        }
+                        catch ()
                     case 6:
                         System.out.println("Inserisci ISBN per eliminare la bubblicazione:");
                         int isbnElimina = scanner.nextInt();

@@ -61,17 +61,38 @@ public class Archivio {
         return result;
     }
 
-    public void aggiornamentoDaIsbn (int isbn , Pubblicazione p) throws NotExistingIsbnException {
+    public void aggiornamentoDaIsbn(int isbn) throws NotExistingIsbnException {
         Pubblicazione elDaAggiornare = pubblicazioni.stream()
                 .filter(pub -> pub.getISBN() == isbn)
                 .findFirst()
                 .orElse(null);
-        if(elDaAggiornare == null) throw new NotExistingIsbnException("non esiste una pubblicazione con questo Isbn!!");
+        if (elDaAggiornare == null) throw new NotExistingIsbnException("Non esiste una pubblicazione con questo ISBN!");
 
-        pubblicazioni.remove(elDaAggiornare);
-        pubblicazioni.add(p);
-        System.out.println("la pubblicazione è stata aggiornata correttamente");
+        System.out.println("Pubblicazione trovata: " + elDaAggiornare);
+
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Vuoi modificare il titolo? premi invio per lasciare invariato");
+        String titolo = scanner.nextLine();
+        if (!titolo.isEmpty()) {
+            elDaAggiornare.setTitolo(titolo);
+        }
+
+        System.out.println("Vuoi modificare il numero di pagine? premi invio per lasciare invariato");
+        String pagineInput = scanner.nextLine();
+        if (!pagineInput.isEmpty()) {
+            elDaAggiornare.setNumeroPagine(Integer.parseInt(pagineInput));
+        }
+
+        System.out.println("Vuoi modificare l'anno di pubblicazione? premi invio per lasciare invariato");
+        String annoInput = scanner.nextLine();
+        if (!annoInput.isEmpty()) {
+            elDaAggiornare.setAnnoDiPubblicazione(LocalDate.parse(annoInput));
+        }
+
+        System.out.println("Pubblicazione aggiornata: " + elDaAggiornare);
     }
+
 
     public void statisticheCatalogo (){
         long numeroLibri = pubblicazioni.stream()

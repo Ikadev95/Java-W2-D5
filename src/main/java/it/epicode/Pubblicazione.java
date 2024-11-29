@@ -27,5 +27,21 @@ abstract public class Pubblicazione {
         return numeroPagine;
     }
 
+    public String getTitolo() {
+        return titolo;
+    }
+
+    public void setTitolo(String titolo) {
+        this.titolo = titolo;
+    }
+
+    public void setAnnoDiPubblicazione(LocalDate annoDiPubblicazione) {
+        this.annoDiPubblicazione = annoDiPubblicazione;
+    }
+
+    public void setNumeroPagine(int numeroPagine) {
+        this.numeroPagine = numeroPagine;
+    }
+
     public void stampa (){}
 }
