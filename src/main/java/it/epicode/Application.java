@@ -1,10 +1,14 @@
 package it.epicode;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.Scanner;
 
 public class Application {
+    private static final Logger LOGGER = LoggerFactory.getLogger(Application.class);
 
     public static void main(String[] args) {
 
@@ -18,9 +22,7 @@ public class Application {
 
         Archivio archivio = new Archivio();
 
-
-
-        try{
+        try {
             archivio.aggiungiEl(libro1);
             archivio.aggiungiEl(libro2);
             archivio.aggiungiEl(libro3);
@@ -28,104 +30,101 @@ public class Application {
             archivio.aggiungiEl(rivista2);
             archivio.aggiungiEl(rivista3);
         } catch (ExistingIsbnException e) {
-            System.out.println(e.getMessage());
+            LOGGER.error("Errore durante l'aggiunta della pubblicazione: {}", e.getMessage());
         }
 
         archivio.getPubblicazioni().forEach(pub -> pub.stampa());
         Scanner scanner = new Scanner(System.in);
 
-        while(true){
-            System.out.println("scegli una delle seguenti azioni: ");
-            System.out.println("1. Aggiungi pubblicazione");
-            System.out.println("2. Ricerca per ISBN");
-            System.out.println("3. Ricerca per autore");
-            System.out.println("4. Elimina per anno di pubblicazione");
-            System.out.println("5. Aggiornamento da ISBN");
-            System.out.println("6. Elimina per ISBN");
-            System.out.println("7. Statistiche catalogo");
-            System.out.println("0. Esci");
+        while (true) {
+            LOGGER.info("Scegli una delle seguenti azioni:");
+            LOGGER.info("1. Aggiungi pubblicazione");
+            LOGGER.info("2. Ricerca per ISBN");
+            LOGGER.info("3. Ricerca per autore");
+            LOGGER.info("4. Elimina per anno di pubblicazione");
+            LOGGER.info("5. Aggiornamento da ISBN");
+            LOGGER.info("6. Elimina per ISBN");
+            LOGGER.info("7. Statistiche catalogo");
+            LOGGER.info("0. Esci");
 
-
-            try{
+            try {
                 int x = scanner.nextInt();
                 scanner.nextLine();
 
-                switch (x){
+                switch (x) {
                     case 1:
-                        System.out.println("inserisci il tipo di pubblicazione scegliendo tra Libro/Rivista");
+                        LOGGER.info("Inserisci il tipo di pubblicazione scegliendo tra Libro/Rivista");
                         String tipo = scanner.nextLine();
-                        System.out.println("inserisci ISBN:");
+                        LOGGER.info("Inserisci ISBN:");
                         int isbn = scanner.nextInt();
                         scanner.nextLine();
-                        System.out.println("Inserisci titolo:");
+                        LOGGER.info("Inserisci titolo:");
                         String titolo = scanner.nextLine();
-                        System.out.println("inserisci il numero di pagine:");
+                        LOGGER.info("Inserisci il numero di pagine:");
                         int pagine = scanner.nextInt();
                         scanner.nextLine();
-                        System.out.println("Inserisci anno di pubblicazione (YYYY-MM-DD):");
+                        LOGGER.info("Inserisci anno di pubblicazione (YYYY-MM-DD):");
                         String annoInput = scanner.nextLine();
                         LocalDate anno = null;
                         try {
                             anno = LocalDate.parse(annoInput);
                         } catch (DateTimeParseException e) {
-                            System.out.println("Formato data non valido. Inserisci una data nel formato YYYY-MM-DD.");
+                            LOGGER.error("Formato data non valido. Inserisci una data nel formato YYYY-MM-DD.");
                         }
 
-
-                        if(tipo.toLowerCase().equals("libro")){
-                            System.out.println("Inserisci autore:");
+                        if (tipo.toLowerCase().equals("libro")) {
+                            LOGGER.info("Inserisci autore:");
                             String autore = scanner.nextLine();
-                            System.out.println("Inserisci genere:");
+                            LOGGER.info("Inserisci genere:");
                             String genere = scanner.nextLine();
-                            Pubblicazione libro = new Libro(isbn,titolo,anno,pagine,autore,genere);
+                            Pubblicazione libro = new Libro(isbn, titolo, anno, pagine, autore, genere);
                             try {
                                 archivio.aggiungiEl(libro);
                             } catch (ExistingIsbnException e) {
-                                System.out.println(e.getMessage());
+                                LOGGER.error("Errore nell'aggiungere il libro: {}", e.getMessage());
                             }
-                        }
-                        else if(tipo.toLowerCase().equals("rivista")){
-                            System.out.println("Inserisci periodicità: SETTIMANALE, MENSILE, SEMESTRALE");
+                        } else if (tipo.toLowerCase().equals("rivista")) {
+                            LOGGER.info("Inserisci periodicità: SETTIMANALE, MENSILE, SEMESTRALE");
                             try {
                                 Periodicita periodicita = Periodicita.valueOf(scanner.nextLine().toUpperCase());
                                 Pubblicazione rivista = new Rivista(isbn, titolo, anno, pagine, periodicita);
                                 try {
                                     archivio.aggiungiEl(rivista);
                                 } catch (ExistingIsbnException e) {
-                                    System.out.println(e.getMessage());
+                                    LOGGER.error("Errore nell'aggiungere la rivista: {}", e.getMessage());
                                 }
                             } catch (IllegalArgumentException e) {
-                                System.out.println("Periodicità non valida. Scegli tra SETTIMANALE, MENSILE, SEMESTRALE.");
+                                LOGGER.error("Periodicità non valida. Scegli tra SETTIMANALE, MENSILE, SEMESTRALE.");
                             }
                         } else {
-                            System.out.println("Tipo di pubblicazione non riconosciuto.");
+                            LOGGER.error("Tipo di pubblicazione non riconosciuto.");
                         }
                         break;
                     case 2:
-                        System.out.println("Inserisci ISBN da cercare:");
+                        LOGGER.info("Inserisci ISBN da cercare:");
                         int isbnRicerca = scanner.nextInt();
                         scanner.nextLine();
                         try {
                             Pubblicazione p = archivio.ricercaPerISBN(isbnRicerca);
-                            System.out.println("Pubblicazione trovata: " );
+                            LOGGER.info("Pubblicazione trovata:");
                             p.stampa();
                         } catch (NotExistingIsbnException e) {
-                            System.out.println(e.getMessage());
+                            LOGGER.error("Errore nella ricerca per ISBN: {}", e.getMessage());
                         }
                         break;
                     case 3:
-                        System.out.println("Inserisci l'autore da cercare:");
+                        LOGGER.info("Inserisci l'autore da cercare:");
                         String autore = scanner.nextLine();
                         try {
                             Libro libroTrovato = archivio.ricercaPerAutore(autore);
-                            System.out.println("Libro trovato: ");
+                            LOGGER.info("Libro trovato:");
                             libroTrovato.stampa();
                         } catch (LibroNonTrovatoException e) {
-                            System.out.println(e.getMessage());
+                            LOGGER.error("Errore nella ricerca per autore: {}", e.getMessage());
                         }
                         break;
                     case 4:
-                        System.out.println("Inserisci anno di pubblicazione (YYYY-MM-DD) per cercare la pubblicazione:");
+                        LOGGER.info("Inserisci anno di pubblicazione (YYYY-MM-DD) per cercare la pubblicazione:");
                         LocalDate annoDiPubblicazione = null;
                         boolean validDate = false;
                         while (!validDate) {
@@ -134,49 +133,49 @@ public class Application {
                                 annoDiPubblicazione = LocalDate.parse(annoInput1);
                                 validDate = true;
                             } catch (DateTimeParseException e) {
-                                System.out.println("Formato data non valido. Inserisci una data nel formato YYYY-MM-DD.");
+                                LOGGER.error("Formato data non valido. Inserisci una data nel formato YYYY-MM-DD.");
                             }
                         }
-                        try{
+                        try {
                             Pubblicazione pubbTrovata = archivio.ricercaAnnoPubblicazione(annoDiPubblicazione);
-                            System.out.println("Pubblicazione trovata: ");
+                            LOGGER.info("Pubblicazione trovata:");
                             pubbTrovata.stampa();
-                        } catch (PubblicazioneNonTrovataException e){
-                            System.out.println(e.getMessage());
+                        } catch (PubblicazioneNonTrovataException e) {
+                            LOGGER.error("Errore nella ricerca per anno di pubblicazione: {}", e.getMessage());
                         }
                         break;
                     case 5:
-                        System.out.println("Inserisci ISBN per modificare la bubblicazione:");
+                        LOGGER.info("Inserisci ISBN per modificare la pubblicazione:");
                         int ISBN = scanner.nextInt();
                         scanner.nextLine();
-                        try{
+                        try {
                             archivio.aggiornamentoDaIsbn(ISBN);
-                        }
-                        catch (NotExistingIsbnException e) {
-                            System.out.println(e.getMessage());
+                        } catch (NotExistingIsbnException e) {
+                            LOGGER.error("Errore nell'aggiornamento della pubblicazione: {}", e.getMessage());
                         }
                         break;
                     case 6:
-                        System.out.println("Inserisci ISBN per eliminare la bubblicazione:");
+                        LOGGER.info("Inserisci ISBN per eliminare la pubblicazione:");
                         int isbnElimina = scanner.nextInt();
                         scanner.nextLine();
                         try {
                             archivio.eliminaPerISBN(isbnElimina);
                         } catch (NotExistingIsbnException e) {
-                            System.out.println(e.getMessage());
+                            LOGGER.error("Errore nell'eliminazione per ISBN: {}", e.getMessage());
                         }
                         break;
                     case 7:
                         archivio.statisticheCatalogo();
                         break;
                     case 0:
-                        System.out.println("Uscita dall'app");
+                        LOGGER.info("Uscita dall'app");
                         return;
                     default:
-                        System.out.println("Scelta non valida");
+                        LOGGER.error("Scelta non valida.");
                         break;
                 }
             } catch (Exception e) {
+                LOGGER.error("Errore inatteso: {}", e.getMessage());
                 throw new RuntimeException(e);
             }
         }
